@@ -1,6 +1,17 @@
 
 project(moco_control)
 add_compile_options(-std=c++11)
+if(WIN32)
+    set(moco_path_default "c:/Program\ Files/Motive/lib/moco/cmake")
+elseif(LINUX)
+    set(moco_path_default "/usr/lib/moco/cmake")
+elseif(APPLE)
+    set(moco_path_default "/Applications/Motive/lib/moco/cmake")
+endif()
+
+find_package(Moco CONFIG REQUIRED PATHS ${moco_path_default})
+find_package(Threads REQUIRED)
+
 find_package(catkin REQUIRED REQUIRED COMPONENTS roscpp controller_manager urdf)
 
 catkin_package(
@@ -19,16 +30,14 @@ include_directories(
 add_library(moco_hw_interface
             src/moco_hw_interface.cpp
 )
-target_link_libraries(moco_hw_interface
-  ${catkin_LIBRARIES}
+target_link_libraries(moco_hw_interface PUBLIC ${catkin_LIBRARIES} motive::moco_api
 )
 
 # Moco Hardware Interface
 add_library(moco_hw_control_loop
             src/moco_hw_control_loop.cpp
 )
-target_link_libraries(moco_hw_control_loop
-  ${catkin_LIBRARIES}
+target_link_libraries(moco_hw_control_loop PUBLIC ${catkin_LIBRARIES}  motive::moco_api
 )
 
 

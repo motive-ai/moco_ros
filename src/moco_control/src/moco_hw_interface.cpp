@@ -1,4 +1,8 @@
 #include <moco_control/moco_hw_interface.h>
+#include <moco_usb_manager.h>
+#include <memory>
+
+using namespace Motive;
 
 namespace moco_control {
 
@@ -37,6 +41,25 @@ void MocoHWInterface::init() {
     joint_velocity_limits_.resize(num_joints_, 0.0);
     joint_effort_limits_.resize(num_joints_, 0.0);
 
+    MocoUSBManager manager;
+    auto all_serials = manager.connected_boards();
+    std::map<std::string, Serial> moco_map;
+    for (auto &s : all_serials) {
+        auto board_name = manager.board_name(s);
+        moco_map.emplace(board_name.name, s);
+    }
+    std::vector<Serial> my_serial_order;
+    for (auto name : joint_names_) {
+        try {
+            auto serial = moco_map.at(name);
+            my_serial_order.emplace_back(serial);
+        } catch (...) {
+            std::cerr << "No device named: " << name << " exists." << std::endl;
+        }
+    }
+    moco_chain_ = make_unique<Chain>(my_serial_order);
+    auto state = moco_chain_->get_state();
+
     // Initialize interfaces for each joint
     for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) {
         ROS_DEBUG_STREAM_NAMED(name_, "Loading joint name: " << joint_names_[joint_id]);
@@ -74,6 +97,12 @@ void MocoHWInterface::init() {
 
 void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
     // get robot state
+    auto state = moco_chain_->get_state();
+    // pass back data
+    for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) {
+        joint_position_[joint_id] = state.joint_position[joint_id];
+    }
+
 }
 
 void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) {

@@ -19,7 +19,16 @@
 #include <joint_limits_interface/joint_limits_rosparam.h>
 #include <joint_limits_interface/joint_limits_urdf.h>
 
+// Moco
+#include <chain.h>
+
 namespace moco_control {
+
+    template<typename T, typename... Args>
+    std::unique_ptr<T> make_unique(Args&&... args)
+    {
+        return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
 
 /// \brief Hardware interface for a robot
 class MocoHWInterface : public hardware_interface::RobotHW {
@@ -129,6 +138,8 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     std::vector<double> joint_position_upper_limits_;
     std::vector<double> joint_velocity_limits_;
     std::vector<double> joint_effort_limits_;
+
+    std::unique_ptr<Motive::Chain> moco_chain_;
 };  // class
 
 }  // namespace

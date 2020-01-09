@@ -12,7 +12,8 @@ int main(int argc, char** argv) {
     spinner.start();
 
     // Create the hardware interface specific to your robot
-    std::shared_ptr<moco_control::MocoHWInterface> moco_hw_interface(new moco_control::MocoHWInterface(nh));
+    auto hw = new moco_control::MocoHWInterface(nh);
+    std::shared_ptr<moco_control::MocoHWInterface> moco_hw_interface(hw);
     moco_hw_interface->init();
 
     // Start the control loop
