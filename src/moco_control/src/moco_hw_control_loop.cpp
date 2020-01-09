@@ -11,9 +11,13 @@ MocoHWControlLoop::MocoHWControlLoop(ros::NodeHandle& nh,
     // Load rosparams
     ros::NodeHandle rpsnh(nh, name_);
     std::size_t error = 0;
-    nh.getParam("loop_hz", loop_hz_);
-    nh.getParam("cycle_time_error_threshold", cycle_time_error_threshold_);
-    ROS_INFO_NAMED("moco_hw_control_loop", "Using threshold of %.5lf", cycle_time_error_threshold_);
+    if (!rpsnh.getParam("loop_hz", loop_hz_)) {
+        loop_hz_ = 1000.0;
+    }
+    if (!rpsnh.getParam("cycle_time_error_threshold", cycle_time_error_threshold_)) {
+        cycle_time_error_threshold_ = .1;
+    }
+    ROS_INFO_NAMED("moco_hw_control_loop", "Using cycle time threshold of %.5lf", cycle_time_error_threshold_);
     // Get current time for use with first update
     clock_gettime(CLOCK_MONOTONIC, &last_time_);
 
@@ -28,7 +32,7 @@ void MocoHWControlLoop::update(const ros::TimerEvent& e) {
     elapsed_time_ =
       ros::Duration(current_time_.tv_sec - last_time_.tv_sec + (current_time_.tv_nsec - last_time_.tv_nsec) / 1.0e9);
     last_time_ = current_time_;
-    // ROS_DEBUG_STREAM_THROTTLE_NAMED(1, "moco_hw_main","Sampled update with elapsed time " << elapsed_time_.toSec());
+    ROS_DEBUG_STREAM_THROTTLE_NAMED(1, "moco_hw_main","Sampled update with elapsed time " << elapsed_time_.toSec());
 
     // Error check cycle time
     const double cycle_time_error = (elapsed_time_ - desired_update_freq_).toSec();
@@ -37,15 +41,15 @@ void MocoHWControlLoop::update(const ros::TimerEvent& e) {
                                          << cycle_time_error << ", cycle time: " << elapsed_time_
                                          << ", threshold: " << cycle_time_error_threshold_);
     }
-
+    auto curr_time_ = ros::Time::now();
     // Input
-    hardware_interface_->read(elapsed_time_);
+    hardware_interface_->read(curr_time_, elapsed_time_);
 
     // Control
-    controller_manager_->update(ros::Time::now(), elapsed_time_);
+    controller_manager_->update(curr_time_, elapsed_time_);
 
     // Output
-    hardware_interface_->write(elapsed_time_);
+    hardware_interface_->write(curr_time_, elapsed_time_);
 }
 
 }  // namespace

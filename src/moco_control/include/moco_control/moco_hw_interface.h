@@ -36,10 +36,10 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     virtual void init();
 
     /** \brief Read the state from the robot hardware. */
-    virtual void read(ros::Duration &elapsed_time);
+    virtual void read(const ros::Time& time, const ros::Duration& period);
 
     /** \brief Write the command to the robot hardware. */
-    virtual void write(ros::Duration &elapsed_time);
+    virtual void write(const ros::Time& time, const ros::Duration& period);
 
     /** \brief Set all members to default values */
     virtual void reset();
@@ -76,7 +76,7 @@ class MocoHWInterface : public hardware_interface::RobotHW {
                            std::size_t joint_id);
 
     /** \breif Enforce limits for all values before writing */
-    virtual void enforceLimits(ros::Duration &period);
+    virtual void enforceLimits(const ros::Duration &period);
 
   protected:
 

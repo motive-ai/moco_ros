@@ -14,13 +14,13 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     // Load rosparams
     ros::NodeHandle rpnh(nh_, "hardware_interface");
     std::size_t error = 0;
-    nh.getParam("joints", joint_names_);
+    rpnh.getParam("joints", joint_names_);
     ROS_INFO_NAMED("moco_hw_interface", "MoCo created");
 }
 
 void MocoHWInterface::init() {
     num_joints_ = joint_names_.size();
-
+    ROS_INFO_NAMED("moco_hw_interface", "Using %u joints", (unsigned)num_joints_);
     // Status
     joint_position_.resize(num_joints_, 0.0);
     joint_velocity_.resize(num_joints_, 0.0);
@@ -72,13 +72,12 @@ void MocoHWInterface::init() {
     ROS_INFO_STREAM_NAMED(name_, "MoCo Ready.");
 }
 
-void MocoHWInterface::read(ros::Duration &elapsed_time) {
-    // MOCO API CALLS HERE!
+void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
+    // get robot state
 }
 
-void MocoHWInterface::write(ros::Duration &elapsed_time) {
-    enforceLimits(elapsed_time);
-    // MOCO API CALLS HERE!
+void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) {
+    enforceLimits(period);
 
     // DUMMY PASS-THROUGH CODE
     for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id)
@@ -213,7 +212,7 @@ void MocoHWInterface::reset() {
     pos_jnt_soft_limits_.reset();
 }
 
-void MocoHWInterface::enforceLimits(ros::Duration &period) {
+void MocoHWInterface::enforceLimits(const ros::Duration &period) {
     // CHOOSE THE TYPE OF JOINT LIMITS INTERFACE YOU WANT TO USE
     // YOU SHOULD ONLY NEED TO USE ONE SATURATION INTERFACE,
     // DEPENDING ON YOUR CONTROL METHOD
