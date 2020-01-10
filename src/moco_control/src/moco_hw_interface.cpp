@@ -1,3 +1,9 @@
+/** \file moco_hw_interface.cpp
+ * \brief Provides implementation of ROS hardware interface for Motive Moco controller
+ *
+ * (c) 2020 Motive Mechatronics, Inc.
+ */
+
 #include <moco_control/moco_hw_interface.h>
 #include <moco_usb_manager.h>
 #include <memory>
@@ -19,12 +25,22 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     ros::NodeHandle rpnh(nh_, "hardware_interface");
     std::size_t error = 0;
     rpnh.getParam("joints", joint_names_);
-    ROS_INFO_NAMED("moco_hw_interface", "MoCo created");
+    rpnh.getParam("chain", chain_name_);
+
+    ROS_INFO_STREAM_NAMED("moco_hw_interface", "Created Moco HWInterface for chain \"" << chain_name_ << "\"");
 }
 
-void MocoHWInterface::init() {
-    num_joints_ = joint_names_.size();
-    ROS_INFO_NAMED("moco_hw_interface", "Using %u joints", (unsigned)num_joints_);
+bool MocoHWInterface::init() {
+    bool return_value = true;
+    moco_chain_ = make_unique<Chain>(chain_name_, joint_names_);
+    auto state = moco_chain_->get_state();
+    auto start_positions = state.joint_position;
+
+    num_joints_ = moco_chain_->size();
+    if (num_joints_ != joint_names_.size()) {
+        ROS_WARN_STREAM_NAMED(name_, "Not all Moco controllers found.");
+    }
+    ROS_INFO_NAMED(name_, "Using %u joints", (unsigned)num_joints_);
     // Status
     joint_position_.resize(num_joints_, 0.0);
     joint_velocity_.resize(num_joints_, 0.0);
@@ -41,29 +57,20 @@ void MocoHWInterface::init() {
     joint_velocity_limits_.resize(num_joints_, 0.0);
     joint_effort_limits_.resize(num_joints_, 0.0);
 
-    MocoUSBManager manager;
-    auto all_serials = manager.connected_boards();
-    std::map<std::string, Serial> moco_map;
-    for (auto &s : all_serials) {
-        auto board_name = manager.board_name(s);
-        moco_map.emplace(board_name.name, s);
+    // Create vector of Position-mode commands to send
+    for (auto pos : start_positions) {
+        auto a = std::make_shared<ActuatorPositionCommand>();
+        // set to current robot position
+        a->set_position_command(pos, 0, 0);
+        moco_commands_.emplace_back(a);
     }
-    std::vector<Serial> my_serial_order;
-    for (auto name : joint_names_) {
-        try {
-            auto serial = moco_map.at(name);
-            my_serial_order.emplace_back(serial);
-        } catch (...) {
-            std::cerr << "No device named: " << name << " exists." << std::endl;
-        }
-    }
-    moco_chain_ = make_unique<Chain>(my_serial_order);
-    auto state = moco_chain_->get_state();
+
+    // Read values into joint_{position,velocity,effort}_
+    read(ros::Time::now(), ros::Duration(0));
 
     // Initialize interfaces for each joint
     for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) {
-        ROS_DEBUG_STREAM_NAMED(name_, "Loading joint name: " << joint_names_[joint_id]);
-
+        ROS_INFO_STREAM_NAMED(name_, "Loading joint name: " << joint_names_[joint_id]);
         // Create joint state interface
         joint_state_interface_.registerHandle(hardware_interface::JointStateHandle(
             joint_names_[joint_id], &joint_position_[joint_id],
@@ -92,26 +99,47 @@ void MocoHWInterface::init() {
     registerInterface(&velocity_joint_interface_);  // From RobotHW base class.
     registerInterface(&effort_joint_interface_);    // From RobotHW base class.
 
-    ROS_INFO_STREAM_NAMED(name_, "MoCo Ready.");
+    //TODO: Check if actuator needs phase lock
+    for (int i = 0; i < moco_chain_->size(); ++i) {
+        auto moco = moco_chain_->get_moco_by_index(i);
+        auto phase_lock_mode_param_packet = moco->packet(DATA_FMT_PHASE_LOCK_MODE);
+        moco->send(phase_lock_mode_param_packet);
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    try {
+        moco_chain_->send_command(moco_commands_);
+    } catch (...) {
+        ROS_ERROR_STREAM_NAMED(name_, "Could not initialize chain " << chain_name_);
+        return_value = false;
+    }
+    if (return_value == true) {
+        ROS_INFO_STREAM_NAMED(name_, "MoCo chain " << chain_name_ << " ready.");
+    }
+    return return_value;
 }
 
 void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
     // get robot state
     auto state = moco_chain_->get_state();
     // pass back data
-    for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id) {
+    for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
         joint_position_[joint_id] = state.joint_position[joint_id];
+        joint_velocity_[joint_id] = state.joint_velocity[joint_id];
+        joint_effort_[joint_id] = state.joint_torque[joint_id];
     }
-
 }
 
 void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) {
     enforceLimits(period);
 
-    // DUMMY PASS-THROUGH CODE
-    for (std::size_t joint_id = 0; joint_id < num_joints_; ++joint_id)
-        joint_position_[joint_id] += joint_position_command_[joint_id];
-    // END DUMMY CODE
+    // update command to send
+    for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
+        auto cmd = dynamic_cast<ActuatorPositionCommand*>(moco_commands_[joint_id].get());
+        cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]),
+                joint_velocity_command_[joint_id], 0);
+    }
+
+    moco_chain_->send_command(moco_commands_); // send update to all actuators
 }
 
 void MocoHWInterface::registerJointLimits(const hardware_interface::JointHandle &joint_handle_position,

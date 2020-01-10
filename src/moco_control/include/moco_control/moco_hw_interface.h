@@ -1,4 +1,8 @@
-
+/** \file moco_hw_interface.h
+ * \brief ROS hardware interface for Motive Moco controller
+ *
+ * (c) 2020 Motive Mechatronics, Inc.
+ */
 #ifndef MOCO_HW_INTERFACE_H
 #define MOCO_HW_INTERFACE_H
 
@@ -42,7 +46,7 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     virtual ~MocoHWInterface() {}
 
     /** \brief Initialize the hardware interface */
-    virtual void init();
+    virtual bool init();
 
     /** \brief Read the state from the robot hardware. */
     virtual void read(const ros::Time& time, const ros::Duration& period);
@@ -116,6 +120,9 @@ class MocoHWInterface : public hardware_interface::RobotHW {
 
     // Configuration
     std::vector<std::string> joint_names_;
+    // Name of Moco chain
+    std::string chain_name_;
+    // Number of joints in config
     std::size_t num_joints_;
     urdf::Model *urdf_model_;
 
@@ -140,6 +147,7 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     std::vector<double> joint_effort_limits_;
 
     std::unique_ptr<Motive::Chain> moco_chain_;
+    std::vector<std::shared_ptr<Motive::ActuatorCommand>> moco_commands_;
 };  // class
 
 }  // namespace

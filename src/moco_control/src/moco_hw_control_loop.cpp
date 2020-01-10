@@ -12,7 +12,7 @@ MocoHWControlLoop::MocoHWControlLoop(ros::NodeHandle& nh,
     ros::NodeHandle rpsnh(nh, name_);
     std::size_t error = 0;
     if (!rpsnh.getParam("loop_hz", loop_hz_)) {
-        loop_hz_ = 1000.0;
+        loop_hz_ = 100.0;
     }
     if (!rpsnh.getParam("cycle_time_error_threshold", cycle_time_error_threshold_)) {
         cycle_time_error_threshold_ = .1;
