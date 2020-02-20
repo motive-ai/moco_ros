@@ -7,7 +7,7 @@
   <author email="zelenak@picknik.ai">Andy Zelenak</author>
   <maintainer email="zelenak@picknik.ai">Andy Zelenak</maintainer>
 
-  <license>Proprietary</license>
+  <license>BSD</license>
 
   <url type="website">http://moveit.ros.org/</url>
   <url type="bugtracker">https://github.com/ros-planning/moveit/issues</url>
