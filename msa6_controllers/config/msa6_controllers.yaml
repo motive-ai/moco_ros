@@ -1,0 +1,34 @@
+# msa6_controllers Settings -----------
+# Settings for ros_control control loop
+msa6_hw_control_loop:
+  loop_hz: 100
+  cycle_time_error_threshold: 0.01
+
+# Settings for the hw interface
+msa6_hw_interface:
+  joint_names:
+     - joint_J1
+     - joint_J2
+     - joint_J3
+     - joint_J4
+     - joint_J5
+     - joint_J6
+  sim_control_mode: 0 # 0: position, 1: velocity
+
+# Publish all joint states ----------------------------------
+# Creates the /joint_states topic necessary in ROS
+joint_state_controller:
+   type:         joint_state_controller/JointStateController
+   publish_rate: 50
+
+# Group Position Controllers ---------------------------------------
+# Allows to send single ROS msg of Float64MultiArray to all joints
+joint_group_position_controller:
+   type: position_controllers/JointGroupPositionController
+   joints:
+      - joint_J1
+      - joint_J2
+      - joint_J3
+      - joint_J4
+      - joint_J5
+      - joint_J6

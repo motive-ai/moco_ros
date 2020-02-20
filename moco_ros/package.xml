@@ -1,0 +1,21 @@
+<package format="2">
+  <name>moco_ros</name>
+  <version>0.0.0</version>
+  <description>
+      Drivers, description, and utilities for Motive Mechatronics arms.
+  </description>
+
+  <maintainer email="doug@motive.ai">Doug Johnston</maintainer>
+  <maintainer email="zelenak@picknik.ai">A. Zelenak</maintainer>
+
+  <license>BSD</license>
+
+  <author email="doug@motive.ai">Doug Johnston</author>
+  <author email="zelenak@picknik.ai">Andy Zelenak</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

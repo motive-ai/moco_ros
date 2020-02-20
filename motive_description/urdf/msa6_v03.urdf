@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot
+  name="msa6" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find motive_description)/urdf/msa6_v03.gazebo" />
+
+  <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="link1"/>
+    <!-- Floating to avoid collision-->
+    <origin
+      xyz="0 0 1" />
+  </joint>
+
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="-0.0001891965806999 0.00814939112254526 -0.0679671379631671"
+        rpy="0 0 0" />
+      <mass
+        value="1000" />
+      <inertia
+        ixx="0.00568440725393699"
+        ixy="-2.48418274545367E-06"
+        ixz="-1.43448454863796E-06"
+        iyy="0.00546056135146065"
+        iyz="-8.53126673133878E-05"
+        izz="0.00940814160512712" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L0.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L0.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint1"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="link1" />
+    <child
+      link="link2" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.7"/>
+    <limit
+      lower="-3"
+      upper="3"
+      effort="10"
+      velocity="3" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link
+    name="link2">
+    <inertial>
+      <origin
+        xyz="0.0405579251259118 0.000148037637915972 0.0373884415293615"
+        rpy="0 0 0" />
+      <mass
+        value="0.994568789062109" />
+      <inertia
+        ixx="0.000871368331790458"
+        ixy="5.8967819671103E-06"
+        ixz="-9.32019201967857E-06"
+        iyy="0.00102898272283109"
+        iyz="4.48995343849513E-06"
+        izz="0.00100915983398637" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint2"
+    type="continuous">
+    <origin
+      xyz="0.1 0 0.053637"
+      rpy="0 1.5708 0" />
+    <parent
+      link="link2" />
+    <child
+      link="link3" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.7"/>
+    <limit
+      lower="-3"
+      upper="3"
+      effort="10"
+      velocity="3" />
+  </joint>
+
+  <link
+    name="link3">
+    <inertial>
+      <origin
+        xyz="-0.0233912681255654 5.07193508100426E-09 0.0574608556000689"
+        rpy="0 0 0" />
+      <mass
+        value="1.03970207416395" />
+      <inertia
+        ixx="0.000982341298250602"
+        ixy="1.6889093811854E-10"
+        ixz="1.43488183979887E-05"
+        iyy="0.00108375790774574"
+        iyz="1.25208074040544E-09"
+        izz="0.00085164105299854" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L2.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint3"
+    type="continuous">
+    <origin
+      xyz="-0.061373 0 0.1"
+      rpy="3.1416 -1.5708 3.1416" />
+    <parent
+      link="link3" />
+    <child
+      link="link4" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.7"/>
+    <limit
+      lower="-3"
+      upper="3"
+      effort="10"
+      velocity="3" />
+  </joint>
+
+  <link
+    name="link4">
+    <inertial>
+      <origin
+        xyz="0.0882091815895141 0.000382416927123476 0.0414439931676011"
+        rpy="0 0 0" />
+      <mass
+        value="1.08371144697155" />
+      <inertia
+        ixx="0.000846905000933598"
+        ixy="5.11362911288068E-07"
+        ixz="6.95167800014045E-06"
+        iyy="0.00236610817172575"
+        iyz="-3.39200028974221E-06"
+        izz="0.00244838596657558" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L3.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint4"
+    type="continuous">
+    <origin
+      xyz="0.175 0 0.082746"
+      rpy="0 0 0" />
+    <parent
+      link="link4" />
+    <child
+      link="link5" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.7"/>
+    <limit
+      lower="-3"
+      upper="3"
+      effort="10"
+      velocity="3" />
+  </joint>
+
+  <link
+    name="link5">
+    <inertial>
+      <origin
+        xyz="0.0754962263390022 -3.38541219514172E-08 0.0122611623448696"
+        rpy="0 0 0" />
+      <mass
+        value="1.06997840394961" />
+      <inertia
+        ixx="0.000785135538887561"
+        ixy="1.86035415267915E-09"
+        ixz="-4.45380019162014E-08"
+        iyy="0.00169501573153193"
+        iyz="-2.88356321567175E-10"
+        izz="0.00167020062636679" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L4.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint5"
+    type="continuous">
+    <origin
+      xyz="0.15 0 0"
+      rpy="-3.1416 0 3.1416" />
+    <parent
+      link="link5" />
+    <child
+      link="link6" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.7"/>
+    <limit
+      lower="-3"
+      upper="3"
+      effort="10"
+      velocity="3" />
+  </joint>
+
+  <link
+    name="link6">
+    <inertial>
+      <origin
+        xyz="-0.0381633182758676 0.000120487282595873 0.0574997291159953"
+        rpy="0 0 0" />
+      <mass
+        value="0.996094913930728" />
+      <inertia
+        ixx="0.000971102761070874"
+        ixy="-6.98824211975093E-06"
+        ixz="0.0001262049866473"
+        iyy="0.00108122463496807"
+        iyz="3.07992940193039E-06"
+        izz="0.000963176220975203" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L5.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="joint6"
+    type="continuous">
+    <origin
+      xyz="-0.09475 0 0.09475"
+      rpy="-1.5708 -1.4987 1.5708" />
+    <parent
+      link="link6" />
+    <child
+      link="link7" />
+    <axis
+      xyz="0 0 1" />
+    <dynamics
+      damping="0.7"/>
+    <limit
+      lower="-3"
+      upper="3"
+      effort="10"
+      velocity="3" />
+  </joint>
+
+  <link
+    name="link7">
+    <inertial>
+      <origin
+        xyz="0.00256722652496424 9.14780075838423E-08 0.0206515643270234"
+        rpy="0 0 0" />
+      <mass
+        value="0.692011838300634" />
+      <inertia
+        ixx="0.000504092072686761"
+        ixy="-2.30694440316709E-10"
+        ixz="-8.07005596324433E-07"
+        iyy="0.000512950182671424"
+        iyz="-3.26098618000851E-10"
+        izz="0.000475009694597435" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://motive_description/meshes/msa6/link_L6.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+</robot>
