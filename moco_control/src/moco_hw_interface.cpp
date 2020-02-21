@@ -7,6 +7,8 @@
 #include <moco_control/moco_hw_interface.h>
 #include <moco_usb_manager.h>
 #include <memory>
+#include <moco_usb.h>
+#include <moco_zmq.h>
 
 using namespace Motive;
 
@@ -26,13 +28,59 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     std::size_t error = 0;
     rpnh.getParam("joints", joint_names_);
     rpnh.getParam("chain", chain_name_);
+    for (auto name : joint_names_) {
+        if (rpnh.hasParam(std::string("simulated_joints/").append(name))) {
+            sim_joint_names_.emplace_back(name);
+        }
+    }
+    data_rate_ = 100;
+    rpnh.getParam("data_rate", data_rate_);
+    if (data_rate_ < 10) {
+        data_rate_ = 10;
+    }
 
     ROS_INFO_STREAM_NAMED("moco_hw_interface", "Created Moco HWInterface for chain \"" << chain_name_ << "\"");
 }
 
 bool MocoHWInterface::init() {
     bool return_value = true;
-    moco_chain_ = make_unique<Chain>(chain_name_, joint_names_);
+    // Load rosparams
+    ros::NodeHandle rpnh(nh_, "hardware_interface");
+    MocoUSBManager usb_manager;
+    auto all_serials = usb_manager.connected_boards();
+    std::unordered_map<std::string, std::shared_ptr<MocoUSB>> usb_board_map;
+    for (auto &serial : all_serials) {
+        auto board_name = usb_manager.board_name(serial);
+        if (board_name.chain == chain_name_ &&
+            std::find(joint_names_.begin(), joint_names_.end(), board_name.name) != joint_names_.end() ) {
+            usb_board_map[board_name.name] = std::make_shared<MocoUSB>(usb_manager.get_device_id(serial), serial);
+        }
+    }
+    std::vector<std::shared_ptr<Moco>> moco_list;
+    std::string sim_host = "localhost";
+    int sim_send_port = 6511;
+    int sim_receive_port = 6510;
+    rpnh.getParam("simulator/host", sim_host);
+
+    for (auto const &name : joint_names_) {
+        auto joint_string = std::string("simulated_joints/").append(name);
+        // check if any of our joints should be simulated
+        if (rpnh.hasParam(joint_string)) {
+            int serial = 0;
+            rpnh.getParam(joint_string + "/serial", serial);
+            auto sim_moco = std::make_shared<MocoZMQ>(serial, sim_host, sim_send_port, sim_receive_port);
+            moco_list.emplace_back(sim_moco);
+        } else if (usb_board_map.count(name) > 0) {
+            // if not, try to use a real joint
+            moco_list.emplace_back(usb_board_map[name]);
+        } else {
+            //if it doesn't exist in the usb_board_map, we don't see the hardware
+            ROS_WARN_NAMED(name_, "Warning: Could not find %s for chain %s", name.c_str(), chain_name_.c_str());
+        }
+    }
+
+    moco_chain_ = make_unique<Chain>(moco_list);
+    moco_chain_->set_update_rate(data_rate_);
     auto state = moco_chain_->get_state();
     auto start_positions = state.joint_position;
 
@@ -105,7 +153,7 @@ bool MocoHWInterface::init() {
         auto phase_lock_mode_param_packet = moco->packet(DATA_FMT_PHASE_LOCK_MODE);
         moco->send(phase_lock_mode_param_packet);
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2500));
     try {
         moco_chain_->send_command(moco_commands_);
     } catch (...) {
@@ -138,8 +186,11 @@ void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) 
         cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]),
                 joint_velocity_command_[joint_id], 0);
     }
-
-    moco_chain_->send_command(moco_commands_); // send update to all actuators
+    try {
+        moco_chain_->send_command(moco_commands_); // send update to all actuators
+    } catch (...) {
+        //TODO: Handle error
+    }
 }
 
 void MocoHWInterface::registerJointLimits(const hardware_interface::JointHandle &joint_handle_position,
