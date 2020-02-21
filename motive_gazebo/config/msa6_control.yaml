@@ -9,27 +9,27 @@ msa6:
   joint_group_position_controller:
      type: effort_controllers/JointGroupPositionController
      joints:
-        - joint1
-        - joint2
-        - joint3
-        - joint4
-        - joint5
-        - joint6
-     joint1:
+        - joint_J1
+        - joint_J2
+        - joint_J3
+        - joint_J4
+        - joint_J5
+        - joint_J6
+     joint_J1:
         pid: {p: 500.0, i: 10, d: 50}
-     joint2:
+     joint_J2:
         pid: {p: 500.0, i: 10, d: 50}
-     joint3:
+     joint_J3:
         pid: {p: 500.0, i: 10, d: 50}
-     joint4:
+     joint_J4:
         pid: {p: 500.0, i: 10, d: 50}
-     joint5:
+     joint_J5:
         pid: {p: 500.0, i: 10, d: 50}
-     joint6:
+     joint_J6:
         pid: {p: 500.0, i: 10, d: 50}
 
   # Position Controllers ---------------------------------------
-  joint1_position_controller:
+  joint_J1_position_controller:
     type: effort_controllers/JointPositionController
-    joint: joint1
+    joint: joint_J1
     pid: {p: 500.0, i: 10, d: 50}

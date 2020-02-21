@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0)
+cmake_minimum_required(VERSION 2.8.3)
 project(moco_ros)
 find_package(catkin REQUIRED)
 catkin_metapackage()

@@ -29,15 +29,15 @@ position_trajectory_controller:
    constraints:
       goal_time: 5.0
       #stopped_position_tolerance: 0.4 # Defaults to 0.01
-      joint1:
+      joint_J1:
           trajectory: 0.60
           goal:       0.15
-      joint2:
+      joint_J2:
           trajectory: 0.60
           goal:       0.15
    # gains:
-   #     joint1: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
-   #     joint2: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+   #     joint_J1: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+   #     joint_J2: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
 
     # state_publish_rate:  50 # Defaults to 50
     # action_monitor_rate: 20 # Defaults to 20
@@ -45,13 +45,13 @@ position_trajectory_controller:
 
 # Individual Position Controllers ---------------------------------------
 # Allows to send individual ROS msg of Float64 to each joint separately
-joint1_position_controller:
+joint_J1_position_controller:
    type: position_controllers/JointPositionController
-   joint: joint1
+   joint: joint_J1
    pid: {p: 100.0, i: 0.01, d: 10.0}
-joint2_position_controller:
+joint_J2_position_controller:
    type: position_controllers/JointPositionController
-   joint: joint2
+   joint: joint_J2
    pid: {p: 100.0, i: 0.01, d: 10.0}
 
 # Group Position Controllers ---------------------------------------
@@ -59,5 +59,5 @@ joint2_position_controller:
 joint_position_controller:
    type: position_controllers/JointGroupPositionController
    joints:
-     - joint1
-     - joint2
+     - joint_J1
+     - joint_J2

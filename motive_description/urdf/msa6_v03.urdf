@@ -10,14 +10,14 @@
 
   <joint name="fixed" type="fixed">
     <parent link="world"/>
-    <child link="link1"/>
+    <child link="link_L1"/>
     <!-- Floating to avoid collision-->
     <origin
       xyz="0 0 1" />
   </joint>
 
   <link
-    name="link1">
+    name="link_L1">
     <inertial>
       <origin
         xyz="-0.0001891965806999 0.00814939112254526 -0.0679671379631671"
@@ -58,15 +58,15 @@
   </link>
 
   <joint
-    name="joint1"
-    type="continuous">
+    name="joint_J1"
+    type="revolute">
     <origin
       xyz="0 0 0"
       rpy="0 0 -1.5708" />
     <parent
-      link="link1" />
+      link="link_L1" />
     <child
-      link="link2" />
+      link="link_L2" />
     <axis
       xyz="0 0 1" />
     <dynamics
@@ -81,7 +81,7 @@
   </joint>
 
   <link
-    name="link2">
+    name="link_L2">
     <inertial>
       <origin
         xyz="0.0405579251259118 0.000148037637915972 0.0373884415293615"
@@ -122,15 +122,15 @@
   </link>
 
   <joint
-    name="joint2"
-    type="continuous">
+    name="joint_J2"
+    type="revolute">
     <origin
       xyz="0.1 0 0.053637"
       rpy="0 1.5708 0" />
     <parent
-      link="link2" />
+      link="link_L2" />
     <child
-      link="link3" />
+      link="link_L3" />
     <axis
       xyz="0 0 1" />
     <dynamics
@@ -143,7 +143,7 @@
   </joint>
 
   <link
-    name="link3">
+    name="link_L3">
     <inertial>
       <origin
         xyz="-0.0233912681255654 5.07193508100426E-09 0.0574608556000689"
@@ -184,15 +184,15 @@
   </link>
 
   <joint
-    name="joint3"
-    type="continuous">
+    name="joint_J3"
+    type="revolute">
     <origin
       xyz="-0.061373 0 0.1"
       rpy="3.1416 -1.5708 3.1416" />
     <parent
-      link="link3" />
+      link="link_L3" />
     <child
-      link="link4" />
+      link="link_L4" />
     <axis
       xyz="0 0 1" />
     <dynamics
@@ -205,7 +205,7 @@
   </joint>
 
   <link
-    name="link4">
+    name="link_L4">
     <inertial>
       <origin
         xyz="0.0882091815895141 0.000382416927123476 0.0414439931676011"
@@ -246,15 +246,15 @@
   </link>
 
   <joint
-    name="joint4"
-    type="continuous">
+    name="joint_J4"
+    type="revolute">
     <origin
       xyz="0.175 0 0.082746"
       rpy="0 0 0" />
     <parent
-      link="link4" />
+      link="link_L4" />
     <child
-      link="link5" />
+      link="link_L5" />
     <axis
       xyz="0 0 1" />
     <dynamics
@@ -267,7 +267,7 @@
   </joint>
 
   <link
-    name="link5">
+    name="link_L5">
     <inertial>
       <origin
         xyz="0.0754962263390022 -3.38541219514172E-08 0.0122611623448696"
@@ -308,15 +308,15 @@
   </link>
 
   <joint
-    name="joint5"
-    type="continuous">
+    name="joint_J5"
+    type="revolute">
     <origin
       xyz="0.15 0 0"
       rpy="-3.1416 0 3.1416" />
     <parent
-      link="link5" />
+      link="link_L5" />
     <child
-      link="link6" />
+      link="link_L6" />
     <axis
       xyz="0 0 1" />
     <dynamics
@@ -329,7 +329,7 @@
   </joint>
 
   <link
-    name="link6">
+    name="link_L6">
     <inertial>
       <origin
         xyz="-0.0381633182758676 0.000120487282595873 0.0574997291159953"
@@ -370,13 +370,13 @@
   </link>
 
   <joint
-    name="joint6"
-    type="continuous">
+    name="joint_J6"
+    type="revolute">
     <origin
       xyz="-0.09475 0 0.09475"
       rpy="-1.5708 -1.4987 1.5708" />
     <parent
-      link="link6" />
+      link="link_L6" />
     <child
       link="link7" />
     <axis

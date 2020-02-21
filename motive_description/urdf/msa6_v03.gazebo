@@ -9,27 +9,27 @@
     </plugin>
   </gazebo>
 
-  <gazebo reference="link1">
+  <gazebo reference="link_L1">
     <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="link2">
+  <gazebo reference="link_L2">
     <material>Gazebo/Blue</material>
   </gazebo>
 
-  <gazebo reference="link3">
+  <gazebo reference="link_L3">
     <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="link4">
+  <gazebo reference="link_L4">
     <material>Gazebo/Blue</material>
   </gazebo>
 
-  <gazebo reference="link5">
+  <gazebo reference="link_L5">
     <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="link6">
+  <gazebo reference="link_L6">
     <material>Gazebo/Blue</material>
   </gazebo>
 
@@ -38,62 +38,62 @@
   </gazebo>
 
   <!-- Joint transmissions for Gazebo compatability -->
-  <transmission name="trans_joint1">
+  <transmission name="trans_joint_J1">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint1">
+    <joint name="joint_J1">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="joint1_motor">
+    <actuator name="joint_J1_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  <transmission name="trans_joint2">
+  <transmission name="trans_joint_J2">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint2">
+    <joint name="joint_J2">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="joint2_motor">
+    <actuator name="joint_J2_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  <transmission name="trans_joint3">
+  <transmission name="trans_joint_J3">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint3">
+    <joint name="joint_J3">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="joint3_motor">
+    <actuator name="joint_J3_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  <transmission name="trans_joint4">
+  <transmission name="trans_joint_J4">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint4">
+    <joint name="joint_J4">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="joint4_motor">
+    <actuator name="joint_J4_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  <transmission name="trans_joint5">
+  <transmission name="trans_joint_J5">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint5">
+    <joint name="joint_J5">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="joint5_motor">
+    <actuator name="joint_J5_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
-  <transmission name="trans_joint6">
+  <transmission name="trans_joint_J6">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="joint6">
+    <joint name="joint_J6">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
-    <actuator name="joint6_motor">
+    <actuator name="joint_J6_motor">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
         <mechanicalReduction>1</mechanicalReduction>
     </actuator>
