@@ -1,5 +1,5 @@
 <launch>
-  <param name="robot_description" textfile="$(find MSA6_v03)/urdf/MSA6_v03.urdf" />
+  <param name="robot_description" textfile="$(find motive_description)/urdf/msa6_v03.urdf" />
   <!-- Load example URDF -->
 <!--  <param name="robot_description" command="$(find xacro)/xacro.py '$(find moco_description)/urdf/moco.xacro'" />-->
     

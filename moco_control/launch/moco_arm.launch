@@ -8,7 +8,7 @@
 
   <!-- Load URDF -->
 <!--   <param name="robot_description" textfile="$(find motive_arm)/urdf/motive_arm.urdf" /> -->
-  <param name="robot_description" textfile="$(find MSA6_v03)/urdf/MSA6_v03.urdf" />
+  <param name="robot_description" textfile="$(find motive_description)/urdf/msa6_v03.urdf" />
 
 <!--  <group ns="moco">-->
 
