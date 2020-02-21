@@ -6,12 +6,32 @@ moco_hw_interface:
 
 # Settings for ros_control hardware interface
 hardware_interface:
-   chain: ""
+   data_rate: 100
+   chain: "msa6-1001"
    joints:
-      - j1
-      - j2
-   sim_control_mode: 1 # 0: position, 1: velocity
+      - joint_J1
+      - joint_J2
+      - joint_J3
+      - joint_J4
+      - joint_J5
+      - joint_J6
+   simulated_joints:
+     joint_J1:
+         serial: 1001
+     joint_J2:
+         serial: 1002
+     joint_J3:
+         serial: 1003
+     joint_J4:
+         serial: 1004
+     joint_J5:
+         serial: 1005
+     joint_J6:
+         serial: 1006
 
+   sim_control_mode: 1 # 0: position, 1: velocity
+   simulator:
+      host: localhost
 # Publish all joint states ----------------------------------
 # Creates the /joint_states topic necessary in ROS
 joint_state_controller:
@@ -22,10 +42,13 @@ joint_state_controller:
 # For detailed explanations of parameter see http://wiki.ros.org/joint_trajectory_controller
 position_trajectory_controller:
    type: position_controllers/JointTrajectoryController
-   # These joints can likely just be copied from the hardware_interface list above
    joints:
-      - j1
-      - j2
+      - joint_J1
+      - joint_J2
+      - joint_J3
+      - joint_J4
+      - joint_J5
+      - joint_J6
    constraints:
       goal_time: 5.0
       #stopped_position_tolerance: 0.4 # Defaults to 0.01
@@ -59,5 +82,9 @@ joint_J2_position_controller:
 joint_position_controller:
    type: position_controllers/JointGroupPositionController
    joints:
-     - joint_J1
-     - joint_J2
+      - joint_J1
+      - joint_J2
+      - joint_J3
+      - joint_J4
+      - joint_J5
+      - joint_J6

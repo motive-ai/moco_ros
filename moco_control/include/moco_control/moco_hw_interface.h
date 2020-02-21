@@ -120,11 +120,13 @@ class MocoHWInterface : public hardware_interface::RobotHW {
 
     // Configuration
     std::vector<std::string> joint_names_;
+    std::vector<std::string> sim_joint_names_;
     // Name of Moco chain
     std::string chain_name_;
     // Number of joints in config
     std::size_t num_joints_;
     urdf::Model *urdf_model_;
+    int data_rate_;
 
     // Modes
     bool use_rosparam_joint_limits_;
