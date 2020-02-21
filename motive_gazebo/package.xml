@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+  <name>motive_gazebo</name>
+  <version>0.0.0</version>
+  <description>Gazebo simulation for Motive robots.</description>
+
+  <maintainer email="zelenak@picknik.ai">Andy Zelenak</maintainer>
+
+  <license>BSD</license>
+
+  <maintainer email="zelenak@picknik.ai">Andy Zelenak</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>controller_manager</run_depend>
+  <run_depend>joint_state_controller</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>effort_controllers</run_depend>
+
+
+  <export>
+  </export>
+
+</package>

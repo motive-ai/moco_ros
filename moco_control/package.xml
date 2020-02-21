@@ -5,7 +5,7 @@
   <description>Hardware interface for the Motive Controller</description>
   <author email="doug@motive.ai">Doug Johnston</author>
   <maintainer email="doug@motive.ai">Doug Johnston</maintainer>
-  <license>Proprietary</license>
+  <license>BSD</license>
   <url type="website">https://motive.ai</url>
   <buildtool_depend>catkin</buildtool_depend>
 

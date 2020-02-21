@@ -1,0 +1,10 @@
+# Parameters for Gazebo simulation
+msa6:
+  gazebo_ros_control:
+    pid_gains:
+      joint_J1: {p: 500.0, i: 10, d: 50}
+      joint_J2: {p: 500.0, i: 10, d: 50}
+      joint_J3: {p: 500.0, i: 10, d: 50}
+      joint_J4: {p: 500.0, i: 10, d: 50}
+      joint_J5: {p: 500.0, i: 10, d: 50}
+      joint_J6: {p: 500.0, i: 10, d: 50}

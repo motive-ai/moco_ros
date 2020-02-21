@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/msa6</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="link_L1">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_L2">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="link_L3">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_L4">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="link_L5">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="link_L6">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <gazebo reference="link7">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- Joint transmissions for Gazebo compatability -->
+  <transmission name="trans_joint_J1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_J1">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint_J1_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="trans_joint_J2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_J2">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint_J2_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="trans_joint_J3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_J3">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint_J3_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="trans_joint_J4">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_J4">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint_J4_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="trans_joint_J5">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_J5">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint_J5_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="trans_joint_J6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="joint_J6">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="joint_J6_motor">
+        <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+</robot>
