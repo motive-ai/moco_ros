@@ -10,20 +10,20 @@
 
   <joint name="fixed" type="fixed">
     <parent link="world"/>
-    <child link="link_L1"/>
+    <child link="link_L0"/>
     <!-- Floating to avoid collision-->
     <origin
-      xyz="0 0 1" />
+      xyz="0 0 .15" />
   </joint>
 
   <link
-    name="link_L1">
+    name="link_L0">
     <inertial>
       <origin
         xyz="-0.0001891965806999 0.00814939112254526 -0.0679671379631671"
         rpy="0 0 0" />
       <mass
-        value="1000" />
+        value="1.224" />
       <inertia
         ixx="0.00568440725393699"
         ixy="-2.48418274545367E-06"
@@ -38,7 +38,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L0.STL" />
+          filename="package://motive_description/meshes/msa6/link_L0.stl" />
       </geometry>
       <material
         name="">
@@ -52,7 +52,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L0.STL" />
+          filename="package://motive_description/meshes/msa6/link_L0.stl" />
       </geometry>
     </collision>
   </link>
@@ -64,24 +64,24 @@
       xyz="0 0 0"
       rpy="0 0 -1.5708" />
     <parent
-      link="link_L1" />
+      link="link_L0" />
     <child
-      link="link_L2" />
+      link="link_L1" />
     <axis
       xyz="0 0 1" />
     <dynamics
       damping="0.7"/>
     <limit
-      lower="-3"
-      upper="3"
-      effort="10"
+      lower="-2.74"
+      upper="3.1"
+      effort="14"
       velocity="3" />
     <safety_controller
       k_velocity="0" />
   </joint>
 
   <link
-    name="link_L2">
+    name="link_L1">
     <inertial>
       <origin
         xyz="0.0405579251259118 0.000148037637915972 0.0373884415293615"
@@ -102,7 +102,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L1.STL" />
+          filename="package://motive_description/meshes/msa6/link_L1.stl" />
       </geometry>
       <material
         name="">
@@ -116,7 +116,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L1.STL" />
+          filename="package://motive_description/meshes/msa6/link_L1.stl" />
       </geometry>
     </collision>
   </link>
@@ -128,22 +128,22 @@
       xyz="0.1 0 0.053637"
       rpy="0 1.5708 0" />
     <parent
-      link="link_L2" />
+      link="link_L1" />
     <child
-      link="link_L3" />
+      link="link_L2" />
     <axis
       xyz="0 0 1" />
     <dynamics
       damping="0.7"/>
     <limit
-      lower="-3"
-      upper="3"
-      effort="10"
+      lower="-2.92"
+      upper="2.92"
+      effort="14"
       velocity="3" />
   </joint>
 
   <link
-    name="link_L3">
+    name="link_L2">
     <inertial>
       <origin
         xyz="-0.0233912681255654 5.07193508100426E-09 0.0574608556000689"
@@ -164,7 +164,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L2.STL" />
+          filename="package://motive_description/meshes/msa6/link_L2.stl" />
       </geometry>
       <material
         name="">
@@ -178,7 +178,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L2.STL" />
+          filename="package://motive_description/meshes/msa6/link_L2.stl" />
       </geometry>
     </collision>
   </link>
@@ -190,22 +190,22 @@
       xyz="-0.061373 0 0.1"
       rpy="3.1416 -1.5708 3.1416" />
     <parent
-      link="link_L3" />
+      link="link_L2" />
     <child
-      link="link_L4" />
+      link="link_L3" />
     <axis
       xyz="0 0 1" />
     <dynamics
       damping="0.7"/>
     <limit
-      lower="-3"
-      upper="3"
-      effort="10"
-      velocity="3" />
+      lower="-3.28"
+      upper="2.55"
+      effort="14"
+      velocity="6" />
   </joint>
 
   <link
-    name="link_L4">
+    name="link_L3">
     <inertial>
       <origin
         xyz="0.0882091815895141 0.000382416927123476 0.0414439931676011"
@@ -226,7 +226,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L3.STL" />
+          filename="package://motive_description/meshes/msa6/link_L3.stl" />
       </geometry>
       <material
         name="">
@@ -240,7 +240,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L3.STL" />
+          filename="package://motive_description/meshes/msa6/link_L3.stl" />
       </geometry>
     </collision>
   </link>
@@ -252,22 +252,22 @@
       xyz="0.175 0 0.082746"
       rpy="0 0 0" />
     <parent
-      link="link_L4" />
+      link="link_L3" />
     <child
-      link="link_L5" />
+      link="link_L4" />
     <axis
       xyz="0 0 1" />
     <dynamics
       damping="0.7"/>
     <limit
-      lower="-3"
-      upper="3"
-      effort="10"
-      velocity="3" />
+      lower="-2.55"
+      upper="2.55"
+      effort="14"
+      velocity="6" />
   </joint>
 
   <link
-    name="link_L5">
+    name="link_L4">
     <inertial>
       <origin
         xyz="0.0754962263390022 -3.38541219514172E-08 0.0122611623448696"
@@ -288,7 +288,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L4.STL" />
+          filename="package://motive_description/meshes/msa6/link_L4.stl" />
       </geometry>
       <material
         name="">
@@ -302,7 +302,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L4.STL" />
+          filename="package://motive_description/meshes/msa6/link_L4.stl" />
       </geometry>
     </collision>
   </link>
@@ -314,22 +314,22 @@
       xyz="0.15 0 0"
       rpy="-3.1416 0 3.1416" />
     <parent
-      link="link_L5" />
+      link="link_L4" />
     <child
-      link="link_L6" />
+      link="link_L5" />
     <axis
       xyz="0 0 1" />
     <dynamics
       damping="0.7"/>
     <limit
-      lower="-3"
-      upper="3"
-      effort="10"
-      velocity="3" />
+      lower="-2.55"
+      upper="2.55"
+      effort="14"
+      velocity="6" />
   </joint>
 
   <link
-    name="link_L6">
+    name="link_L5">
     <inertial>
       <origin
         xyz="-0.0381633182758676 0.000120487282595873 0.0574997291159953"
@@ -350,7 +350,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L5.STL" />
+          filename="package://motive_description/meshes/msa6/link_L5.stl" />
       </geometry>
       <material
         name="">
@@ -364,7 +364,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L5.STL" />
+          filename="package://motive_description/meshes/msa6/link_L5.stl" />
       </geometry>
     </collision>
   </link>
@@ -376,22 +376,22 @@
       xyz="-0.09475 0 0.09475"
       rpy="-1.5708 -1.4987 1.5708" />
     <parent
-      link="link_L6" />
+      link="link_L5" />
     <child
-      link="link7" />
+      link="link_L6" />
     <axis
       xyz="0 0 1" />
     <dynamics
       damping="0.7"/>
     <limit
-      lower="-3"
-      upper="3"
-      effort="10"
-      velocity="3" />
+      lower="-2.92"
+      upper="2.92"
+      effort="14"
+      velocity="6" />
   </joint>
 
   <link
-    name="link7">
+    name="link_L6">
     <inertial>
       <origin
         xyz="0.00256722652496424 9.14780075838423E-08 0.0206515643270234"
@@ -412,7 +412,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L6.STL" />
+          filename="package://motive_description/meshes/msa6/link_L6.stl" />
       </geometry>
       <material
         name="">
@@ -426,7 +426,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://motive_description/meshes/msa6/link_L6.STL" />
+          filename="package://motive_description/meshes/msa6/link_L6.stl" />
       </geometry>
     </collision>
   </link>
