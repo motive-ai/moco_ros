@@ -21,6 +21,50 @@ hardware_interface:
 joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: 50
+
+position_trajectory_controller:
+  type: position_controllers/JointTrajectoryController
+  # These joints can likely just be copied from the hardware_interface list above
+  joints:
+    - joint_J1
+    - joint_J2
+    - joint_J3
+    - joint_J4
+    - joint_J5
+    - joint_J6
+  constraints:
+    goal_time: 5.0
+
+    joint_J1:
+      trajectory: 0.60
+      goal:       0.15
+    joint_J2:
+      trajectory: 0.60
+      goal:       0.15
+    joint_J3:
+      trajectory: 0.60
+      goal:       0.15
+    joint_J4:
+      trajectory: 0.60
+      goal:       0.15
+    joint_J5:
+      trajectory: 0.60
+      goal:       0.15
+    joint_J6:
+      trajectory: 0.60
+      goal:       0.15
+  gains:
+    joint_J1: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+    joint_J2: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+    joint_J3: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+    joint_J4: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+    joint_J5: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+    joint_J6: {p: 2.0,  i: 0.0, d: 0.01, i_clamp: 1}
+
+    state_publish_rate:  50 # Defaults to 50
+    action_monitor_rate: 20 # Defaults to 20
+    hold_trajectory_duration: 0 # Defaults to 0.5
+
 controller_list:
   - name: follow_joint_trajectory_controller
     action_ns: follow_joint_trajectory
