@@ -35,4 +35,15 @@
     <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
   </joint>
 
+  <joint name="ee_link_grappler_fixed_joint" type="fixed">
+    <parent link="link_L6" />
+    <child link="grappler" />
+    <origin xyz="0 0 0.05" rpy="3.14 -1.5708 0" />
+  </joint>
+
+  <!-- end-effector -->
+  <link name="grappler"/>
+  <xacro:include filename="$(find mock_grappler_description)/urdf/mock_grappler.xacro" />
+  <xacro:grappler prefix="" connected_to="grappler"/>
+
 </robot>
