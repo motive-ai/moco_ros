@@ -8,4 +8,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Andy Zelenak
     author_email: zelenak@picknik.ai
-    generated_timestamp: 1582728069
+    generated_timestamp: 1583158910
