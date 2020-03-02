@@ -4,24 +4,13 @@
 
   <xacro:macro name="msa6" params="prefix">
 
-    <link name="${prefix}base_link">
-      <visual>
-        <geometry>
-          <box size="1.80 1.70 0.25"/>
-        </geometry>
-          <origin rpy="0 0 0.0" xyz="0.0 0 -0.125"/>
-    <material name="Gray">
-      <color rgba="0.8 0.8 0.8 1.0"/>
-    </material>
-      </visual>
-    </link>
+    <link name="${prefix}base_link" />
 
     <joint name="fixed" type="fixed">
       <parent link="base_link"/>
       <child link="${prefix}link_L0"/>
-      <!-- Floating to avoid collision-->
       <origin
-        xyz="0 0 .15" />
+        xyz="0 0 0" />
     </joint>
 
     <link

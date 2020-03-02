@@ -1,11 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
     package: motive_description
-    relative_path: urdf/msa6_v03_on_table.urdf.xacro
+    relative_path: urdf/msa6_v03_on_stand.urdf.xacro
     xacro_args: ""
   SRDF:
     relative_path: config/msa6_v03.srdf
   CONFIG:
     author_name: Andy Zelenak
     author_email: zelenak@picknik.ai
-    generated_timestamp: 1583158910
+    generated_timestamp: 1583190291
