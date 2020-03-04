@@ -15,8 +15,9 @@
 
 // ROS Controls
 #include <hardware_interface/robot_hw.h>
-#include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/posvel_command_interface.h>
 #include <controller_manager/controller_manager.h>
 #include <joint_limits_interface/joint_limits.h>
 #include <joint_limits_interface/joint_limits_interface.h>
@@ -103,10 +104,11 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     ros::NodeHandle nh_;
 
     // Hardware interfaces
-    hardware_interface::JointStateInterface joint_state_interface_;
     hardware_interface::PositionJointInterface position_joint_interface_;
+    hardware_interface::JointStateInterface joint_state_interface_;
     hardware_interface::VelocityJointInterface velocity_joint_interface_;
     hardware_interface::EffortJointInterface effort_joint_interface_;
+    hardware_interface::PosVelJointInterface pos_vel_joint_interface_;
 
     // Joint limits interfaces - Saturation
     joint_limits_interface::PositionJointSaturationInterface pos_jnt_sat_interface_;

@@ -86,6 +86,11 @@ bool MocoHWInterface::init() {
             joint_state_interface_.getHandle(joint_names_[joint_id]), &joint_velocity_command_[joint_id]);
         velocity_joint_interface_.registerHandle(joint_handle_velocity);
 
+        hardware_interface::PosVelJointHandle joint_handle_pos_vel = hardware_interface::PosVelJointHandle(
+            joint_state_interface_.getHandle(joint_names_[joint_id]), &joint_position_command_[joint_id],
+            &joint_velocity_command_[joint_id]);
+        pos_vel_joint_interface_.registerHandle(joint_handle_pos_vel);
+
         hardware_interface::JointHandle joint_handle_effort = hardware_interface::JointHandle(
             joint_state_interface_.getHandle(joint_names_[joint_id]), &joint_effort_command_[joint_id]);
         effort_joint_interface_.registerHandle(joint_handle_effort);
@@ -95,9 +100,9 @@ bool MocoHWInterface::init() {
     }  // end for each joint
 
     registerInterface(&joint_state_interface_);     // From RobotHW base class.
-    registerInterface(&position_joint_interface_);  // From RobotHW base class.
     registerInterface(&velocity_joint_interface_);  // From RobotHW base class.
     registerInterface(&effort_joint_interface_);    // From RobotHW base class.
+    registerInterface(&pos_vel_joint_interface_);    // From RobotHW base class.
 
     //TODO: Check if actuator needs phase lock
     for (int i = 0; i < moco_chain_->size(); ++i) {

@@ -1,10 +1,9 @@
 <launch>
 
-  <!-- Load example URDF -->
-  <param name="robot_description" command="$(find xacro)/xacro.py '$(find moco_description)/urdf/moco.xacro'" />
+  <param name="robot_description" textfile="$(find motive_description)/urdf/msa6_v03.urdf" /> 
     
   <!-- Show in Rviz  -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find moco_description)/launch/moco.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find msa6_moveit_config)/launch/moveit.rviz"/>
 
 </launch>
 
