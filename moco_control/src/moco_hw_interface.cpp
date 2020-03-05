@@ -100,6 +100,7 @@ bool MocoHWInterface::init() {
     }  // end for each joint
 
     registerInterface(&joint_state_interface_);     // From RobotHW base class.
+    registerInterface(&position_joint_interface_);  // From RobotHW base class.
     registerInterface(&velocity_joint_interface_);  // From RobotHW base class.
     registerInterface(&effort_joint_interface_);    // From RobotHW base class.
     registerInterface(&pos_vel_joint_interface_);    // From RobotHW base class.
