@@ -131,7 +131,7 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
     for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
         joint_position_[joint_id] = state.joint_position[joint_id];
         joint_velocity_[joint_id] = state.joint_velocity[joint_id];
-        joint_effort_[joint_id] = state.joint_torque[joint_id];
+        joint_effort_[joint_id] = state.motor_torque[joint_id];
     }
 }
 
