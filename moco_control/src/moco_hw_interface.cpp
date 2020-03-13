@@ -111,7 +111,7 @@ bool MocoHWInterface::init() {
         auto phase_lock_mode_param_packet = moco->packet(DATA_FMT_PHASE_LOCK_MODE);
         moco->send(phase_lock_mode_param_packet);
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2500));
     try {
         moco_chain_->send_command(moco_commands_);
     } catch (...) {
