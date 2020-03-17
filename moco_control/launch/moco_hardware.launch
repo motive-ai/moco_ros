@@ -5,6 +5,8 @@
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
 
+  <arg name="moco_chain" default="MSA6_1001" />
+
   <!-- Load URDF -->
   <param name="robot_description" textfile="$(find motive_description)/urdf/msa6_v03.urdf" />
 
@@ -18,7 +20,10 @@
   <!-- Convert joint states to /tf tranforms -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
+  <!-- Load MOCO-related parameters -->
   <rosparam file="$(find moco_control)/config/moco_controllers.yaml" command="load"/>
+  <param name="hardware_interface/chain" type="string" value="$(arg moco_chain)" />
+
 
   <!-- Load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"

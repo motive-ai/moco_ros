@@ -6,7 +6,6 @@ moco_hw_interface:
 
 # Settings for ros_control hardware interface
 hardware_interface:
-  chain: "MSA6_1001"
   joints:
     - joint_J1
     - joint_J2
