@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="msa6_on_stand" >
+
+  <!-- Import all Gazebo customization elements, including control config -->
+  <xacro:include filename="$(find motive_description)/urdf/msa6_v03.gazebo" />
+
+  <!-- define the robot's position and orientation in the world coordinate system -->
+  <joint name="world_joint" type="fixed">
+    <parent link="world" />
+    <child link = "base_link" />
+    <origin xyz="0.194 0.369 1.73" rpy="1.5708 0 1.5708" />
+  </joint>
+
+  <link name="world" />
+
+  <!-- load arm URDF -->
+  <xacro:include filename="$(find motive_description)/urdf/msa6_v03.urdf.xacro" />
+  <xacro:msa6 prefix="" />
+
+  <!-- connect arm to end-effector -->
+  <joint name="link_L6_to_end_effector_joint" type="fixed">
+    <parent link="link_L6" />
+    <child link = "wrist_link" />
+    <origin xyz="0 0 0.05" rpy="${-pi/2} 0 ${pi/4}" />
+  </joint>
+
+  <!-- end-effector -->
+  <xacro:include filename="$(find grappler_description)/urdf/grappler_description.urdf.xacro" />
+  <xacro:grappler prefix="" />
+
+  <!-- Add a tool control point -->
+  <joint name="end_effector_to_tcp_joint" type="fixed">
+    <parent link="link_L6" />
+    <child link = "tcp" />
+    <origin xyz="0 0 0.34" rpy="0 ${-pi/2} 0" />
+  </joint>
+
+  <link name="tcp" />
+
+</robot>
