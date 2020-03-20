@@ -41,7 +41,7 @@ void MocoHWControlLoop::update(const ros::TimerEvent& e) {
                                          << cycle_time_error << ", cycle time: " << elapsed_time_
                                          << ", threshold: " << cycle_time_error_threshold_);
     }
-    auto curr_time_ = ros::Time::now();
+    auto curr_time_ = e.current_real;
     // Input
     hardware_interface_->read(curr_time_, elapsed_time_);
 

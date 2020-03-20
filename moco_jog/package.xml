@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>moco_jog</name>
+  <version>0.0.0</version>
+  <description>Example of jogging a moco arm</description>
+
+  <author email="doug@motive.ai">Doug Johnston</author>
+  <author email="zelenak@picknik.ai">Andy Zelenak</author>
+  <maintainer email="doug@motive.ai">Doug Johnston</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>moveit_jog_arm</exec_depend>
+</package>
