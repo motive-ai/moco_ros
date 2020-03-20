@@ -17,7 +17,7 @@ MocoHWControlLoop::MocoHWControlLoop(ros::NodeHandle& nh,
     if (!rpsnh.getParam("cycle_time_error_threshold", cycle_time_error_threshold_)) {
         cycle_time_error_threshold_ = .1;
     }
-    ROS_INFO_NAMED("moco_hw_control_loop", "Using cycle time threshold of %.5lf", cycle_time_error_threshold_);
+    ROS_INFO_NAMED(name_, "Using cycle time threshold of %.5lf", cycle_time_error_threshold_);
     // Get current time for use with first update
     clock_gettime(CLOCK_MONOTONIC, &last_time_);
 
@@ -28,11 +28,8 @@ MocoHWControlLoop::MocoHWControlLoop(ros::NodeHandle& nh,
 
 void MocoHWControlLoop::update(const ros::TimerEvent& e) {
     // Get change in time
-    clock_gettime(CLOCK_MONOTONIC, &current_time_);
-    elapsed_time_ =
-      ros::Duration(current_time_.tv_sec - last_time_.tv_sec + (current_time_.tv_nsec - last_time_.tv_nsec) / 1.0e9);
-    last_time_ = current_time_;
-    ROS_DEBUG_STREAM_THROTTLE_NAMED(1, "moco_hw_main","Sampled update with elapsed time " << elapsed_time_.toSec());
+    elapsed_time_ = e.current_real - e.last_real;
+    ROS_DEBUG_STREAM_THROTTLE_NAMED(1, name_, "Sampled update with elapsed time " << elapsed_time_.toSec());
 
     // Error check cycle time
     const double cycle_time_error = (elapsed_time_ - desired_update_freq_).toSec();
