@@ -14,6 +14,8 @@ hardware_interface:
     - joint_J5
     - joint_J6
   sim_control_mode: 1 # 0: position, 1: velocity
+  error_flags_topic: moco/errors
+  warn_flags_topic: moco/warnings
 
 # Publish all joint states ----------------------------------
 # Creates the /joint_states topic necessary in ROS

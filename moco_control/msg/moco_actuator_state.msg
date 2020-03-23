@@ -1,0 +1,11 @@
+uint16 error_flags
+uint16 warning_flags
+uint16 mode
+float32 motor_position
+float32 joint_position
+float32 motor_velocity
+float32 joint_velocity
+float32 motor_torque
+float32 joint_torque
+float32 joint_torque_dot
+

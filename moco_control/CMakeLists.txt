@@ -12,12 +12,30 @@ endif()
 find_package(Moco CONFIG REQUIRED PATHS ${moco_path_default})
 find_package(Threads REQUIRED)
 
-find_package(catkin REQUIRED REQUIRED COMPONENTS roscpp controller_manager urdf)
+find_package(catkin REQUIRED REQUIRED COMPONENTS
+        roscpp
+        controller_manager
+        urdf
+        std_msgs
+        message_generation)
+
+add_message_files(
+        FILES
+        moco_actuator_state.msg
+        moco_actuator_system.msg
+        motive_robot_state.msg
+        motive_robot_system.msg
+)
+
+generate_messages(
+        DEPENDENCIES
+        std_msgs
+)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES moco_control
-  CATKIN_DEPENDS controller_manager urdf
+  CATKIN_DEPENDS controller_manager urdf message_runtime
 #  DEPENDS system_lib
 )
 

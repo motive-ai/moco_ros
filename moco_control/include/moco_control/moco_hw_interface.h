@@ -150,6 +150,11 @@ class MocoHWInterface : public hardware_interface::RobotHW {
 
     std::unique_ptr<Motive::Chain> moco_chain_;
     std::vector<std::shared_ptr<Motive::ActuatorCommand>> moco_commands_;
+
+    //msgs
+    ros::Publisher actuator_state_pub_;
+    ros::Publisher actuator_system_pub_;
+    int actuator_system_rate_;
 };  // class
 
 }  // namespace
