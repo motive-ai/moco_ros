@@ -22,7 +22,7 @@
   <joint name="link_L6_to_end_effector_joint" type="fixed">
     <parent link="link_L6" />
     <child link = "wrist_link" />
-    <origin xyz="0 0 0.05" rpy="${-pi/2} 0 ${pi/4}" />
+    <origin xyz="0 0 0.05" rpy="${-pi/2} 0 ${5*pi/8}" />
   </joint>
 
   <!-- end-effector -->
