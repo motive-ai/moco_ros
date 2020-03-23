@@ -132,6 +132,7 @@ bool MocoHWInterface::init() {
     //TODO: Check if actuator needs phase lock
     for (int i = 0; i < moco_chain_->size(); ++i) {
         auto moco = moco_chain_->get_moco_by_index(i);
+        moco_index_map_[moco->get_serial()] = i;
         auto phase_lock_mode_param_packet = moco->packet(DATA_FMT_PHASE_LOCK_MODE);
         moco->send(phase_lock_mode_param_packet);
     }
@@ -142,6 +143,24 @@ bool MocoHWInterface::init() {
         ROS_ERROR_STREAM_NAMED(name_, "Could not initialize chain " << chain_name_);
         return_value = false;
     }
+
+    // request system packets if needed
+    if (actuator_system_rate_ > 0) {
+        auto f = [this](std::shared_ptr<const MocoData> d) {
+            this->moco_data_buffer_array_[this->moco_index_map_[d->serial()]]->write(d);
+            return true;
+        };
+        auto system_data_request = MocoData::create_packet(DATA_FMT_PERIODIC_REQUEST);
+        system_data_request.data.request.periodic.packet_type = DATA_FMT_SYSTEM;
+        system_data_request.data.request.periodic.rate = actuator_system_rate_;
+        for (int i = 0; i < moco_chain_->size(); ++i) {
+            auto moco = moco_chain_->get_moco_by_index(i);
+            moco->send(system_data_request);
+            moco->add_input_handler(f, DATA_FMT_SYSTEM);
+        }
+    }
+
+
     if (return_value == true) {
         ROS_INFO_STREAM_NAMED(name_, "MoCo chain " << chain_name_ << " ready.");
     }
@@ -173,6 +192,25 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
         state_array.robot_state.push_back(actuator_state);
     }
     actuator_state_pub_.publish(state_array);
+
+    //TODO: Create seperate callback to run at actuator_system_rate_ freq
+    if (actuator_system_rate_ > 0) {
+        publish_system_state();
+    }
+}
+
+void MocoHWInterface::publish_system_state() {
+    moco_control::motive_robot_system system_array;
+    moco_control::moco_actuator_system actuator_system;
+    for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
+        auto system_data = moco_data_buffer_array_[joint_id]->pop(DATA_FMT_SYSTEM)->
+                generic_data().status.system;
+        actuator_system.bus_voltage = system_data.bus_voltage;
+        actuator_system.cpu_temp = system_data.cpu_temp;
+        actuator_system.external_temp = system_data.external_temp;
+        system_array.robot_system.push_back(actuator_system);
+    }
+    actuator_system_pub_.publish(system_array);
 }
 
 void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) {
