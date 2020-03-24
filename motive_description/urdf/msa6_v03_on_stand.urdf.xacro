@@ -9,7 +9,7 @@
   <joint name="world_joint" type="fixed">
     <parent link="world" />
     <child link = "base_link" />
-    <origin xyz="0.194 0.369 1.73" rpy="1.5708 0 1.5708" />
+    <origin xyz="0.194 0.369 1.5875" rpy="1.5708 0 1.5708" />
   </joint>
 
   <link name="world" />
