@@ -44,7 +44,11 @@ class MocoHWInterface : public hardware_interface::RobotHW {
    */
     MocoHWInterface(ros::NodeHandle& nh, urdf::Model* urdf_model = NULL);
 
-    virtual ~MocoHWInterface() {}
+    virtual ~MocoHWInterface()
+    {
+      // Ensure motion stops before exiting
+      stopMotion();
+    }
 
     /** \brief Initialize the hardware interface */
     virtual bool init();
@@ -91,6 +95,9 @@ class MocoHWInterface : public hardware_interface::RobotHW {
 
     /** \breif Enforce limits for all values before writing */
     virtual void enforceLimits(const ros::Duration &period);
+
+    /** \brief Halt the robot */
+    virtual void stopMotion();
 
   protected:
 

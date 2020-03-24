@@ -331,4 +331,20 @@ void MocoHWInterface::loadURDF(ros::NodeHandle &nh, std::string param_name) {
     }
 }
 
+void MocoHWInterface::stopMotion() {
+    // get robot state
+    auto state = moco_chain_->get_state();
+    // pass back data
+    for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
+        joint_position_[joint_id] = state.joint_position[joint_id];
+        joint_velocity_[joint_id] = state.joint_velocity[joint_id];
+        joint_effort_[joint_id] = state.motor_torque[joint_id];
+        // get command associated with this joint and set it to current position
+        auto cmd = dynamic_cast<ActuatorPositionCommand*>(moco_commands_[joint_id].get());
+        cmd->set_position_command(static_cast<float>(joint_position_[joint_id]), 0, 0);
+    }
+
+    moco_chain_->send_command(moco_commands_); // send update to all actuators
+}
+
 }  // namespace
