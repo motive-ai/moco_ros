@@ -141,8 +141,8 @@ void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) 
     // update command to send
     for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
         auto cmd = dynamic_cast<ActuatorPositionCommand*>(moco_commands_[joint_id].get());
-        cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]),
-                std::fabs(joint_velocity_command_[joint_id]), 0);
+        cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]),1,0);
+                //std::fabs(joint_velocity_command_[joint_id]), 0);
     }
 
     moco_chain_->send_command(moco_commands_); // send update to all actuators

@@ -9,6 +9,9 @@
     <joint name="fixed" type="fixed">
       <parent link="base_link"/>
       <child link="${prefix}link_L0"/>
+      <origin
+          xyz="0 0 0.10795"
+          rpy="0 0 0" />
     </joint>
 
     <link
