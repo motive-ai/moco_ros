@@ -16,6 +16,7 @@ hardware_interface:
   sim_control_mode: 1 # 0: position, 1: velocity
   actuator_state_data_topic: moco/actuator/state
   actuator_system_data_topic: moco/actuator/system
+  actuator_system_data_rate: 10
 
 # Publish all joint states ----------------------------------
 # Creates the /joint_states topic necessary in ROS

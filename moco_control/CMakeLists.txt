@@ -48,6 +48,9 @@ include_directories(
 add_library(moco_hw_interface
             src/moco_hw_interface.cpp
 )
+
+add_dependencies(moco_hw_interface ${PROJECT_NAME}_gencpp)
+
 target_link_libraries(moco_hw_interface PUBLIC ${catkin_LIBRARIES} motive::moco_api
 )
 
