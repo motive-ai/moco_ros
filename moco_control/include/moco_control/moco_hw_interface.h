@@ -86,6 +86,8 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     /** \brief Get the URDF XML from the parameter server */
     virtual void loadURDF(ros::NodeHandle& nh, std::string param_name);
 
+    void msg_update(const ros::TimerEvent& e);
+
     void publish_system_state();
 
     // Short name of this class
@@ -148,6 +150,9 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     ros::Publisher actuator_state_pub_;
     ros::Publisher actuator_system_pub_;
     int actuator_system_rate_;
+
+    ros::Timer msg_update_loop_;
+
 };  // class
 
 }  // namespace

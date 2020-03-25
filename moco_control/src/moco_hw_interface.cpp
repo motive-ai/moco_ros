@@ -41,7 +41,7 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     rpnh.getParam("actuator_system_data_rate", actuator_system_rate_);
 
     std::size_t state_rate = 100;
-    actuator_state_pub_ = nh.advertise<moco_control::motive_robot_state>(actuator_state_data_topic,
+    actuator_state_pub_ = nh_.advertise<moco_control::motive_robot_state>(actuator_state_data_topic,
             state_rate);
     if (actuator_system_rate_ > 0) {
         actuator_system_pub_ = nh.advertise<moco_control::motive_robot_system>(actuator_system_data_topic,
@@ -96,14 +96,14 @@ bool MocoHWInterface::init() {
             this->moco_data_buffer_array_[this->moco_index_map_[d->serial()]]->write(d);
             return true;
         };
-        auto system_data_request = MocoData::create_packet(DATA_FMT_PERIODIC_REQUEST);
-        system_data_request.data.request.periodic.packet_type = DATA_FMT_SYSTEM;
-        system_data_request.data.request.periodic.rate = actuator_system_rate_;
         for (int i = 0; i < moco_chain_->size(); ++i) {
             auto moco = moco_chain_->get_moco_by_index(i);
-            moco->send(system_data_request);
+            moco->send("request", "periodic", true,
+                    {{"packet_type", DATA_FMT_SYSTEM}, {"rate", actuator_system_rate_ * 2}}).get();
             moco->add_input_handler(f, DATA_FMT_SYSTEM);
         }
+        ros::Duration desired_update_freq = ros::Duration(1.0 / actuator_system_rate_);
+        msg_update_loop_ = nh_.createTimer(desired_update_freq, &MocoHWInterface::msg_update, this);
     }
 
     // Read values into joint_{position,velocity,effort}_
@@ -191,8 +191,9 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
         state_array.robot_state.push_back(actuator_state);
     }
     actuator_state_pub_.publish(state_array);
+}
 
-    //TODO: Create separate callback to run at actuator_system_rate_ freq
+void MocoHWInterface::msg_update(const ros::TimerEvent& e) {
     if (actuator_system_rate_ > 0) {
         publish_system_state();
     }
