@@ -7,6 +7,8 @@
 #define MOCO_HW_INTERFACE_H
 
 // C++
+#include <vector>
+#include <map>
 #include <boost/scoped_ptr.hpp>
 
 // ROS
@@ -84,6 +86,10 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     /** \brief Get the URDF XML from the parameter server */
     virtual void loadURDF(ros::NodeHandle& nh, std::string param_name);
 
+    void msg_update(const ros::TimerEvent& e);
+
+    void publish_system_state();
+
     // Short name of this class
     std::string name_;
 
@@ -137,6 +143,16 @@ class MocoHWInterface : public hardware_interface::RobotHW {
 
     std::unique_ptr<Motive::Chain> moco_chain_;
     std::vector<std::shared_ptr<Motive::ActuatorCommand>> moco_commands_;
+    std::vector<std::shared_ptr<Motive::MocoShallowDataBuffer>> moco_data_buffer_array_;
+    std::map<Motive::Serial, int> moco_index_map_;
+
+    //msgs
+    ros::Publisher actuator_state_pub_;
+    ros::Publisher actuator_system_pub_;
+    int actuator_system_rate_;
+
+    ros::Timer msg_update_loop_;
+
 };  // class
 
 }  // namespace

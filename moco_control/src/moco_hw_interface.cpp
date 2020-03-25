@@ -8,6 +8,11 @@
 #include <moco_usb_manager.h>
 #include <memory>
 
+#include "moco_control/moco_actuator_state.h"
+#include "moco_control/moco_actuator_system.h"
+#include "moco_control/motive_robot_state.h"
+#include "moco_control/motive_robot_system.h"
+
 using namespace Motive;
 
 namespace moco_control {
@@ -24,10 +29,25 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     // Load rosparams
     ros::NodeHandle rpnh(nh_, "hardware_interface");
     std::size_t error = 0;
+    std::string actuator_state_data_topic = "moco/actuator/state";
+    std::string actuator_system_data_topic = "moco/actuator/system";
+    actuator_system_rate_ = 0;
     rpnh.getParam("joints", joint_names_);
     rpnh.getParam("chain", chain_name_);
+    rpnh.getParam("actuator_state_data_topic", actuator_state_data_topic);
+    // actuator_state rate is tied to update rate
+    //rpnh.getParam("actuator_state_data_rate", );
+    rpnh.getParam("actuator_system_data_topic", actuator_system_data_topic);
+    rpnh.getParam("actuator_system_data_rate", actuator_system_rate_);
 
-    ROS_INFO_STREAM_NAMED("moco_hw_interface", "Created Moco HWInterface for chain \"" << chain_name_ << "\"");
+    std::size_t state_rate = 100;
+    actuator_state_pub_ = nh_.advertise<moco_control::motive_robot_state>(actuator_state_data_topic,
+            state_rate);
+    if (actuator_system_rate_ > 0) {
+        actuator_system_pub_ = nh.advertise<moco_control::motive_robot_system>(actuator_system_data_topic,
+                                                                        actuator_system_rate_);
+    }
+    ROS_INFO_STREAM_NAMED(name_, "Created Moco HWInterface for chain \"" << chain_name_ << "\"");
 }
 
 bool MocoHWInterface::init() {
@@ -63,6 +83,27 @@ bool MocoHWInterface::init() {
         // set to current robot position
         a->set_position_command(pos, 0, 0);
         moco_commands_.emplace_back(a);
+    }
+
+    for (int i = 0; i < moco_chain_->size(); ++i) {
+        auto moco = moco_chain_->get_moco_by_index(i);
+        moco_index_map_[moco->get_serial()] = i;
+        moco_data_buffer_array_.emplace_back(std::make_shared<Motive::MocoShallowDataBuffer>());
+    }
+        // request system packets if needed
+    if (actuator_system_rate_ > 0) {
+        auto f = [this](std::shared_ptr<const MocoData> d) {
+            this->moco_data_buffer_array_[this->moco_index_map_[d->serial()]]->write(d);
+            return true;
+        };
+        for (int i = 0; i < moco_chain_->size(); ++i) {
+            auto moco = moco_chain_->get_moco_by_index(i);
+            moco->send("request", "periodic", true,
+                    {{"packet_type", DATA_FMT_SYSTEM}, {"rate", actuator_system_rate_ * 2}}).get();
+            moco->add_input_handler(f, DATA_FMT_SYSTEM);
+        }
+        ros::Duration desired_update_freq = ros::Duration(1.0 / actuator_system_rate_);
+        msg_update_loop_ = nh_.createTimer(desired_update_freq, &MocoHWInterface::msg_update, this);
     }
 
     // Read values into joint_{position,velocity,effort}_
@@ -118,6 +159,7 @@ bool MocoHWInterface::init() {
         ROS_ERROR_STREAM_NAMED(name_, "Could not initialize chain " << chain_name_);
         return_value = false;
     }
+
     if (return_value == true) {
         ROS_INFO_STREAM_NAMED(name_, "MoCo chain " << chain_name_ << " ready.");
     }
@@ -125,6 +167,8 @@ bool MocoHWInterface::init() {
 }
 
 void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
+    moco_control::motive_robot_state state_array;
+    moco_control::moco_actuator_state actuator_state;
     // get robot state
     auto state = moco_chain_->get_state();
     // pass back data
@@ -132,7 +176,48 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
         joint_position_[joint_id] = state.joint_position[joint_id];
         joint_velocity_[joint_id] = state.joint_velocity[joint_id];
         joint_effort_[joint_id] = state.motor_torque[joint_id];
+
+        // faults are bit-packed with 16 high bits as warnings, 16 low as errors
+        actuator_state.error_flags = state.fault_flags[joint_id] & 0xFF;
+        actuator_state.warning_flags = state.fault_flags[joint_id] >> 16;
+        actuator_state.mode = state.mode[joint_id];
+        actuator_state.motor_position = state.motor_position[joint_id];
+        actuator_state.joint_position = state.joint_position[joint_id];
+        actuator_state.motor_velocity = state.motor_velocity[joint_id];
+        actuator_state.joint_velocity = state.joint_velocity[joint_id];
+        actuator_state.motor_torque = state.motor_torque[joint_id];
+        actuator_state.joint_torque = state.joint_torque[joint_id];
+        actuator_state.joint_torque_dot = state.joint_torque_dot[joint_id];
+        state_array.robot_state.push_back(actuator_state);
     }
+    actuator_state_pub_.publish(state_array);
+}
+
+void MocoHWInterface::msg_update(const ros::TimerEvent& e) {
+    if (actuator_system_rate_ > 0) {
+        publish_system_state();
+    }
+}
+
+void MocoHWInterface::publish_system_state() {
+    moco_control::motive_robot_system system_array;
+    moco_control::moco_actuator_system actuator_system;
+    float t;
+    for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
+        auto system_data = moco_data_buffer_array_[joint_id]->pop(DATA_FMT_SYSTEM);
+        if (system_data == nullptr) {
+            return;
+        }
+        auto status_data = system_data->generic_data().status.system;
+        actuator_system.bus_voltage = status_data.bus_voltage;
+        // TODO: get calibrated data instead of raw
+        t = status_data.cpu_temp;
+        actuator_system.cpu_temp = 23.3 + 7.53*t;
+        t = status_data.external_temp;
+        actuator_system.external_temp = -2777 + 2.71*t + -8.71e-4*t*t + 9.34e-08*t*t*t;
+        system_array.robot_system.push_back(actuator_system);
+    }
+    actuator_system_pub_.publish(system_array);
 }
 
 void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) {
