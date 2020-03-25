@@ -9,7 +9,7 @@
   <joint name="world_joint" type="fixed">
     <parent link="world" />
     <child link = "base_link" />
-    <origin xyz="0.194 0.369 1.73" rpy="1.5708 0 1.5708" />
+    <origin xyz="0.06985 0.369 1.5275" rpy="1.5708 0 1.5708" />
   </joint>
 
   <link name="world" />
@@ -22,7 +22,7 @@
   <joint name="link_L6_to_end_effector_joint" type="fixed">
     <parent link="link_L6" />
     <child link = "wrist_link" />
-    <origin xyz="0 0 0.05" rpy="${-pi/2} 0 ${pi/4}" />
+    <origin xyz="0 0 0.05" rpy="${-pi/2} 0 ${5*pi/8}" />
   </joint>
 
   <!-- end-effector -->
@@ -37,5 +37,9 @@
   </joint>
 
   <link name="tcp" />
+
+  <!-- Conveyor belt -->
+  <xacro:include filename="$(find test_stand_scene)/urdf/conveyor.urdf.xacro" />
+  <xacro:conveyor prefix="" />
 
 </robot>

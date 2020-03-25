@@ -225,8 +225,8 @@ void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) 
     // update command to send
     for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
         auto cmd = dynamic_cast<ActuatorPositionCommand*>(moco_commands_[joint_id].get());
-        cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]),
-                std::fabs(joint_velocity_command_[joint_id]), 0);
+        // Second-to-last argument is the maximum velocity that will be used to seek the target pose
+        cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]), 1, 0);
     }
 
     moco_chain_->send_command(moco_commands_); // send update to all actuators
@@ -413,6 +413,22 @@ void MocoHWInterface::loadURDF(ros::NodeHandle &nh, std::string param_name) {
     } else {
         ROS_DEBUG_STREAM_NAMED(name_, "Received URDF from param server");
     }
+}
+
+void MocoHWInterface::stopMotion() {
+    // get robot state
+    auto state = moco_chain_->get_state();
+    // pass back data
+    for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
+        joint_position_[joint_id] = state.joint_position[joint_id];
+        joint_velocity_[joint_id] = state.joint_velocity[joint_id];
+        joint_effort_[joint_id] = state.motor_torque[joint_id];
+        // get command associated with this joint and set it to current position
+        auto cmd = dynamic_cast<ActuatorPositionCommand*>(moco_commands_[joint_id].get());
+        cmd->set_position_command(static_cast<float>(joint_position_[joint_id]), 0, 0);
+    }
+
+    moco_chain_->send_command(moco_commands_); // send update to all actuators
 }
 
 }  // namespace

@@ -19,6 +19,12 @@ rviz    (optional, to visualize the robot)
 ### To jog a joint
 Clone and build the moveit_jog_arm package (https://github.com/ros-planning/moveit/tree/master/moveit_experimental/moveit_jog_arm).
 
+rosservice call /controller_manager/switch_controller "start_controllers: ['streaming_position_controller']
+stop_controllers: ['arm_trajectory_controller']
+strictness: 0
+start_asap: false
+timeout: 0.0"
+
 roslaunch moco_jog jog_example.launch
 
 rostopic pub -s -r 250 /jog_server/delta_jog_cmds geometry_msgs/TwistStamped "header: auto
