@@ -38,4 +38,8 @@
 
   <link name="tcp" />
 
+  <!-- Conveyor belt -->
+  <xacro:include filename="$(find test_stand_scene)/urdf/conveyor.urdf.xacro" />
+  <xacro:conveyor prefix="" />
+
 </robot>
