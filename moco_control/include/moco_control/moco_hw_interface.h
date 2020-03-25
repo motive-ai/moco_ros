@@ -63,26 +63,6 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     virtual void reset();
 
     /**
-     * \brief Check (in non-realtime) if given controllers could be started and stopped from the
-     * current state of the RobotHW
-     * with regard to necessary hardware interface switches. Start and stop list are disjoint.
-     * This is just a check, the actual switch is done in doSwitch()
-     */
-    virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list,
-                           const std::list<hardware_interface::ControllerInfo> &stop_list) const {
-      return true;
-    }
-
-    /**
-    * \brief Perform (in non-realtime) all necessary hardware interface switches in order to start
-    * and stop the given controllers.
-    * Start and stop list are disjoint. The feasability was checked in canSwitch() beforehand.
-    */
-    virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list,
-                        const std::list<hardware_interface::ControllerInfo> &stop_list) {
-    }
-
-    /**
      * \brief Register the limits of the joint specified by joint_id and joint_handle. The limits
      * are retrieved from the urdf_model.
      *
