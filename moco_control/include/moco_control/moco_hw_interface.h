@@ -38,7 +38,7 @@ namespace moco_control {
     }
 
     /// \brief Callback function for Motive log messages to get translated to ROS
-    void moco_logging_function(std::string msg, uint8_t error_level);
+    void mocoLoggingFunction(std::string msg, uint8_t error_level);
 
 /// \brief Hardware interface for a robot
 class MocoHWInterface : public hardware_interface::RobotHW {
@@ -85,16 +85,18 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     virtual void stopMotion();
 
     /** \brief Trigger soft E-stop for joint */
-    void set_estop(int joint_id);
+    void setEstop(int joint_id);
 
   protected:
 
     /** \brief Get the URDF XML from the parameter server */
     virtual void loadURDF(ros::NodeHandle& nh, std::string param_name);
 
-    void msg_update(const ros::TimerEvent& e);
+    /// \brief Read status packets from the actuators and send ROS messages
+    void msgUpdate(const ros::TimerEvent& e);
 
-    void publish_system_state();
+    /// \brief send contents of SystemStatus as ROS message
+    void publishSystemState();
 
     // Short name of this class
     std::string name_;

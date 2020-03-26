@@ -17,7 +17,7 @@ using namespace Motive;
 
 namespace moco_control {
 
-void moco_logging_function(std::string msg, uint8_t error_level) {
+void mocoLoggingFunction(std::string msg, uint8_t error_level) {
     // trim trailing newline because ROS adds one automatically
     if (!msg.empty() && msg[msg.length() - 1] == '\n') {
         msg.erase(msg.length() - 1);
@@ -70,7 +70,7 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
 bool MocoHWInterface::init() {
     // redirect Moco logging to ROS logging
     std::vector<Motive::log_sink> sinks;
-    auto callback_sink = Motive::create_logging_callback_sink(&moco_logging_function);
+    auto callback_sink = Motive::create_logging_callback_sink(&mocoLoggingFunction);
     Motive::set_logging_sink_level(callback_sink, 1);
     sinks.emplace_back(callback_sink);
     Motive::create_logger(sinks);
@@ -127,7 +127,7 @@ bool MocoHWInterface::init() {
             moco->add_input_handler(f, DATA_FMT_SYSTEM);
         }
         ros::Duration desired_update_freq = ros::Duration(1.0 / actuator_system_rate_);
-        msg_update_loop_ = nh_.createTimer(desired_update_freq, &MocoHWInterface::msg_update, this);
+        msg_update_loop_ = nh_.createTimer(desired_update_freq, &MocoHWInterface::msgUpdate, this);
     }
 
     // Read values into joint_{position,velocity,effort}_
@@ -226,13 +226,13 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
     actuator_state_pub_.publish(state_array);
 }
 
-void MocoHWInterface::msg_update(const ros::TimerEvent& e) {
+void MocoHWInterface::msgUpdate(const ros::TimerEvent& e) {
     if (actuator_system_rate_ > 0) {
-        publish_system_state();
+      publishSystemState();
     }
 }
 
-void MocoHWInterface::publish_system_state() {
+void MocoHWInterface::publishSystemState() {
     moco_control::motive_robot_system system_array;
     moco_control::moco_actuator_system actuator_system;
     float t;
@@ -255,7 +255,7 @@ void MocoHWInterface::publish_system_state() {
             ROS_ERROR_STREAM_NAMED(name_, "Thermal error on joint " <<
                 board_name.chain << ":" << board_name.name << std::setprecision(5) <<
                 actuator_system.external_temp << " degrees C");
-            set_estop(joint_id);
+            setEstop(joint_id);
             stopMotion();
         } else if (actuator_system.external_temp > thermal_error_temperature_ - 5) {
             auto board_name = moco_chain_->get_moco_by_index(joint_id)->get_board_name();
@@ -284,7 +284,8 @@ void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) 
     }
 
     try {
-        moco_chain_->send_command(moco_commands_); // send update to all actuators
+        // send update to all actuators
+        moco_chain_->send_command(moco_commands_);
     } catch (std::runtime_error &e) {
         ROS_ERROR_STREAM_THROTTLE_NAMED(1, name_, "Could not set joint position: " << e.what());
     }
@@ -489,7 +490,7 @@ void MocoHWInterface::stopMotion() {
     write(ros::Time::now(), ros::Duration(0));
 }
 
-void MocoHWInterface::set_estop(int joint_id) {
+void MocoHWInterface::setEstop(int joint_id) {
 
     auto moco = moco_chain_->get_moco_by_index(joint_id);
     if (moco == nullptr) {
