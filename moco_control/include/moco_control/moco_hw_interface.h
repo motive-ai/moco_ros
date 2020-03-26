@@ -37,6 +37,9 @@ namespace moco_control {
         return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
     }
 
+    /// \brief Callback function for Motive log messages to get translated to ROS
+    void moco_logging_function(std::string msg, uint8_t error_level);
+
 /// \brief Hardware interface for a robot
 class MocoHWInterface : public hardware_interface::RobotHW {
   public:

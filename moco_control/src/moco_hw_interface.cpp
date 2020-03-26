@@ -17,6 +17,22 @@ using namespace Motive;
 
 namespace moco_control {
 
+void moco_logging_function(std::string msg, uint8_t error_level) {
+    // trim trailing newline because ROS adds one automatically
+    if (!msg.empty() && msg[msg.length() - 1] == '\n') {
+        msg.erase(msg.length() - 1);
+    }
+    if (error_level <= 1) {
+        ROS_DEBUG_STREAM_NAMED("moco_hw_interface", msg);
+    } else if (error_level == 2) {
+        ROS_INFO_STREAM_NAMED("moco_hw_interface", msg);
+    } else if (error_level == 3) {
+        ROS_WARN_STREAM_NAMED("moco_hw_interface", msg);
+    } else if (error_level >= 4) {
+        ROS_ERROR_STREAM_NAMED("moco_hw_interface", msg);
+    }
+}
+
 MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
         : name_("moco_hw_interface"), nh_(nh), use_rosparam_joint_limits_(false),
     use_soft_limits_if_available_(false) {
@@ -51,6 +67,13 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
 }
 
 bool MocoHWInterface::init() {
+    // redirect Moco logging to ROS logging
+    std::vector<Motive::log_sink> sinks;
+    auto callback_sink = Motive::create_logging_callback_sink(&moco_logging_function);
+    Motive::set_logging_sink_level(callback_sink, 1);
+    sinks.emplace_back(callback_sink);
+    Motive::create_logger(sinks);
+
     bool return_value = true;
     moco_chain_ = make_unique<Chain>(chain_name_, joint_names_);
     auto state = moco_chain_->get_state();
