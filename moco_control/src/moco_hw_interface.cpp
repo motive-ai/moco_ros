@@ -55,6 +55,7 @@ MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
     //rpnh.getParam("actuator_state_data_rate", );
     rpnh.getParam("actuator_system_data_topic", actuator_system_data_topic);
     rpnh.getParam("actuator_system_data_rate", actuator_system_rate_);
+    rpnh.getParam("thermal_error_temperature", thermal_error_temperature_);
 
     std::size_t state_rate = 100;
     actuator_state_pub_ = nh_.advertise<moco_control::motive_robot_state>(actuator_state_data_topic,
@@ -239,6 +240,21 @@ void MocoHWInterface::publish_system_state() {
         t = status_data.external_temp;
         actuator_system.external_temp = -2777 + 2.71*t + -8.71e-4*t*t + 9.34e-08*t*t*t;
         system_array.robot_system.push_back(actuator_system);
+
+        if (actuator_system.external_temp > thermal_error_temperature_) {
+            auto board_name = moco_chain_->get_moco_by_index(joint_id)->get_board_name();
+            ROS_ERROR_STREAM_NAMED(name_, "Thermal error on joint " <<
+                board_name.chain << ":" << board_name.name << std::setprecision(5) <<
+                actuator_system.external_temp << " degrees C");
+            set_estop(joint_id);
+            stopMotion();
+        } else if (actuator_system.external_temp > thermal_error_temperature_ - 5) {
+            auto board_name = moco_chain_->get_moco_by_index(joint_id)->get_board_name();
+            ROS_WARN_STREAM_THROTTLE_NAMED(10, name_, "Near thermal limit on joint " <<
+                board_name.chain << ":" << board_name.name << " - " << std::setprecision(5) <<
+                actuator_system.external_temp << " degrees C (limit of " <<
+                thermal_error_temperature_ << " C)");
+        }
     }
     actuator_system_pub_.publish(system_array);
 }
@@ -253,7 +269,11 @@ void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) 
         cmd->set_position_command(static_cast<float>(joint_position_command_[joint_id]), 1, 0);
     }
 
-    moco_chain_->send_command(moco_commands_); // send update to all actuators
+    try {
+        moco_chain_->send_command(moco_commands_); // send update to all actuators
+    } catch (std::runtime_error &e) {
+        ROS_ERROR_STREAM_THROTTLE_NAMED(1, name_, "Could not set joint position: " << e.what());
+    }
 }
 
 void MocoHWInterface::registerJointLimits(const hardware_interface::JointHandle &joint_handle_position,
@@ -454,5 +474,17 @@ void MocoHWInterface::stopMotion() {
 
     moco_chain_->send_command(moco_commands_); // send update to all actuators
 }
+
+void MocoHWInterface::set_estop(int joint_id) {
+
+    auto moco = moco_chain_->get_moco_by_index(joint_id);
+    if (moco == nullptr) {
+        ROS_ERROR_STREAM_NAMED(name_, "Invalid joint_id: " << joint_id);
+    }
+    moco->send("request", "system", true, {{"estop_control", 1}, {"estop_engage", 1}}).get();
+    auto board_name = moco->get_board_name();
+    ROS_WARN_STREAM_NAMED(name_, "E-Stopping joint " << board_name.chain << ":" << board_name.name);
+}
+
 
 }  // namespace

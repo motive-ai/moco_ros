@@ -84,6 +84,9 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     /** \brief Halt the robot */
     virtual void stopMotion();
 
+    /** \brief Trigger soft E-stop for joint */
+    void set_estop(int joint_id);
+
   protected:
 
     /** \brief Get the URDF XML from the parameter server */
@@ -118,6 +121,8 @@ class MocoHWInterface : public hardware_interface::RobotHW {
 
     // Configuration
     std::vector<std::string> joint_names_;
+    float thermal_error_temperature_;
+
     // Name of Moco chain
     std::string chain_name_;
     // Number of joints in config

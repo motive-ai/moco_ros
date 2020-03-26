@@ -17,6 +17,7 @@ hardware_interface:
   actuator_state_data_topic: moco/actuator/state
   actuator_system_data_topic: moco/actuator/system
   actuator_system_data_rate: 10
+  thermal_error_temperature: 100
 
 # Publish all joint states ----------------------------------
 # Creates the /joint_states topic necessary in ROS
