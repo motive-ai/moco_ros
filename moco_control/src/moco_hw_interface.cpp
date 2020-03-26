@@ -35,7 +35,7 @@ void moco_logging_function(std::string msg, uint8_t error_level) {
 
 MocoHWInterface::MocoHWInterface(ros::NodeHandle &nh, urdf::Model *urdf_model)
         : name_("moco_hw_interface"), nh_(nh), use_rosparam_joint_limits_(false),
-    use_soft_limits_if_available_(false) {
+          use_soft_limits_if_available_(false), has_error_state_(false) {
     // Check if the URDF model needs to be loaded
     if (urdf_model == NULL) {
         loadURDF(nh, "robot_description");
@@ -179,6 +179,8 @@ bool MocoHWInterface::init() {
     std::this_thread::sleep_for(std::chrono::milliseconds(2500));
     try {
         moco_chain_->send_command(moco_commands_);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        stopMotion();
     } catch (...) {
         ROS_ERROR_STREAM_NAMED(name_, "Could not initialize chain " << chain_name_);
         return_value = false;
@@ -195,6 +197,7 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
     moco_control::moco_actuator_state actuator_state;
     // get robot state
     auto state = moco_chain_->get_state();
+    bool has_error = false;
     // pass back data
     for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
         joint_position_[joint_id] = state.joint_position[joint_id];
@@ -213,7 +216,13 @@ void MocoHWInterface::read(const ros::Time& time, const ros::Duration& period) {
         actuator_state.joint_torque = state.joint_torque[joint_id];
         actuator_state.joint_torque_dot = state.joint_torque_dot[joint_id];
         state_array.robot_state.push_back(actuator_state);
+        if (actuator_state.error_flags != 0) {
+            ROS_ERROR_STREAM_THROTTLE_NAMED(1, name_, "Error in joint_id " << joint_id
+                << ": " << actuator_state.error_flags);
+            has_error = true;
+        }
     }
+    has_error_state_ = has_error;
     actuator_state_pub_.publish(state_array);
 }
 
@@ -261,6 +270,11 @@ void MocoHWInterface::publish_system_state() {
 
 void MocoHWInterface::write(const ros::Time& time, const ros::Duration& period) {
     enforceLimits(period);
+
+    if (has_error_state_) {
+        ROS_ERROR_STREAM_THROTTLE_NAMED(1, name_, "Not sending actuator commands because of joint error state");
+        return;
+    }
 
     // update command to send
     for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
@@ -460,19 +474,19 @@ void MocoHWInterface::loadURDF(ros::NodeHandle &nh, std::string param_name) {
 }
 
 void MocoHWInterface::stopMotion() {
+    ROS_WARN_STREAM_NAMED(name_, "Stopping motion of all joints");
     // get robot state
     auto state = moco_chain_->get_state();
-    // pass back data
+
+    // set joint command to current state
     for (std::size_t joint_id = 0; joint_id < moco_chain_->size(); ++joint_id) {
-        joint_position_[joint_id] = state.joint_position[joint_id];
-        joint_velocity_[joint_id] = state.joint_velocity[joint_id];
-        joint_effort_[joint_id] = state.motor_torque[joint_id];
-        // get command associated with this joint and set it to current position
-        auto cmd = dynamic_cast<ActuatorPositionCommand*>(moco_commands_[joint_id].get());
-        cmd->set_position_command(static_cast<float>(joint_position_[joint_id]), 0, 0);
+        joint_position_command_[joint_id] = state.joint_position[joint_id];
+        joint_velocity_command_[joint_id] = state.joint_velocity[joint_id];
+        joint_effort_command_[joint_id] = state.motor_torque[joint_id];
     }
 
-    moco_chain_->send_command(moco_commands_); // send update to all actuators
+    // send updated joint command to actuators
+    write(ros::Time::now(), ros::Duration(0));
 }
 
 void MocoHWInterface::set_estop(int joint_id) {

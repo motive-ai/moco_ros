@@ -122,6 +122,7 @@ class MocoHWInterface : public hardware_interface::RobotHW {
     // Configuration
     std::vector<std::string> joint_names_;
     float thermal_error_temperature_;
+    bool has_error_state_;
 
     // Name of Moco chain
     std::string chain_name_;
